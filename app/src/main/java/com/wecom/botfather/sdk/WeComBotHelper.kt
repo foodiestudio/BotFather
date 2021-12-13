@@ -3,26 +3,24 @@ package com.wecom.botfather.sdk
 import com.wecom.botfather.sdk.service.Msg
 import com.wecom.botfather.sdk.service.Text
 import com.wecom.botfather.sdk.service.WeComService
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import org.koin.java.KoinJavaComponent.inject
 
 /**
  * 企业微信机器人
  */
 object WeComBotHelper {
 
-    private val service: WeComService by lazy {
-        Retrofit.Builder()
-            .baseUrl("https://qyapi.weixin.qq.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(WeComService::class.java)
-    }
+    private val service: WeComService by inject(WeComService::class.java)
 
     /**
      * 所有机器人列表
      */
     val bots: MutableSet<Bot> = mutableSetOf()
+
+    /**
+     * 根据 id 查询
+     */
+    fun queryBot(botId: String): Bot? = bots.firstOrNull { it.id == botId }
 
     /**
      * 发送给所有
