@@ -1,4 +1,4 @@
-package com.wecom.botfather
+package com.wecom.botfather.ui.home
 
 import android.os.Bundle
 import android.widget.Toast
@@ -18,6 +18,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,14 +27,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
+import com.wecom.botfather.R
 import com.wecom.botfather.mock.MockData
-import com.wecom.botfather.sdk.Bot
-import com.wecom.botfather.sdk.WeComBotHelper
+import com.wecom.botfather.sdk.BotBean
 import com.wecom.botfather.ui.chat.ChatActivity
 import com.wecom.botfather.ui.settings.SettingsActivity
 import com.wecom.botfather.ui.theme.BotFatherTheme
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 /**
  * 类似与IM那样，首页展示 Bot 列表，底部有个 FAB(添加)
@@ -42,22 +49,27 @@ import com.wecom.botfather.ui.theme.BotFatherTheme
  * - 设置页面
  */
 class MainActivity : ComponentActivity() {
+    private val homeViewModel: HomeViewModel by inject()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        WeComBotHelper.bots.add(MockData.bot)
-
         setContent {
             BotFatherTheme {
-                Content()
+                Content(homeViewModel)
+            }
+        }
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                homeViewModel.fetchData()
             }
         }
     }
 }
 
 @Composable
-private fun Content() {
+private fun Content(viewModel: HomeViewModel) {
     val context = LocalContext.current
+    val bots by viewModel.bots.observeAsState(emptyList())
     Scaffold(
         backgroundColor = MaterialTheme.colors.background,
         topBar = {
@@ -72,7 +84,7 @@ private fun Content() {
                 })
         },
         content = {
-            Chats(WeComBotHelper.bots.toList()) {
+            Chats(bots) {
                 ChatActivity.start(context, MockData.bot.id)
             }
         },
@@ -91,7 +103,7 @@ private fun Content() {
 }
 
 @Composable
-fun Chats(bots: List<Bot>, onClick: (String) -> Unit) {
+fun Chats(bots: List<BotBean>, onClick: (String) -> Unit) {
     LazyColumn {
         items(bots, key = { bot -> bot.id }) { bot ->
             Row(
@@ -116,6 +128,7 @@ fun Chats(bots: List<Bot>, onClick: (String) -> Unit) {
                 Spacer(Modifier.size(8.dp))
                 Text(text = bot.name)
             }
+            Divider()
         }
     }
 }
@@ -126,7 +139,7 @@ fun DefaultPreview() {
     BotFatherTheme {
         Chats(
             listOf(
-                Bot("111")
+                BotBean("111")
             )
         ) {
         }

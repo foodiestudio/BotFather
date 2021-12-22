@@ -1,0 +1,5 @@
+-- 测试从1升级到2，全自动变更，不需要新增代码
+UPDATE bot
+SET avatar = "https://pic2.zhimg.com/v2-d41c2ceaed8f51999522f903672a521f_s.jpg"
+WHERE id = "b7e5e59b-a838-4908-82e9-c330ebccaad8";
+

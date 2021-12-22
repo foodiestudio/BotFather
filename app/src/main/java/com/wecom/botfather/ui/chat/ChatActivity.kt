@@ -17,13 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.lifecycleScope
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.wecom.botfather.R
-import com.wecom.botfather.sdk.Bot
+import com.wecom.botfather.sdk.BotBean
 import com.wecom.botfather.sdk.TextMessage
-import com.wecom.botfather.sdk.WeComBotHelper
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -34,6 +35,8 @@ import java.util.*
  */
 class ChatActivity : ComponentActivity() {
 
+    private val viewModel: ChatViewModel by inject()
+
     private val botId: String by lazy {
         intent.getStringExtra(EXTRA_ID)!!
     }
@@ -41,9 +44,11 @@ class ChatActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent {
-            WeComBotHelper.queryBot(botId)?.let {
-                ChatScreen(it)
+        lifecycleScope.launch {
+            viewModel.queryBotById(botId)?.let {
+                setContent {
+                    ChatScreen(it, viewModel)
+                }
             }
         }
     }
@@ -68,9 +73,9 @@ private val TEMPLATE = """
     """.trimIndent()
 
 @Composable
-fun ChatScreen(bot: Bot) {
+fun ChatScreen(bot: BotBean, viewModel: ChatViewModel) {
     var chatMsg by remember { mutableStateOf(TEMPLATE) }
-    val scope = rememberCoroutineScope()
+//    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -98,9 +103,7 @@ fun ChatScreen(bot: Bot) {
                 },
                 actions = {
                     IconButton(onClick = {
-                        scope.launch {
-                            WeComBotHelper.sendMsg(bot.id, TextMessage.Markdown(chatMsg))
-                        }
+                        viewModel.sendMsg(bot.id, TextMessage.Markdown(chatMsg))
                     }) {
                         Icon(Icons.Default.Send, "send")
                     }
@@ -116,7 +119,7 @@ fun ChatScreen(bot: Bot) {
             }
             OutlinedTextField(
                 placeholder = {
-                    Text("type something freely...")
+                    Text("type something...")
                 },
                 label = {
                     Text("Content")
