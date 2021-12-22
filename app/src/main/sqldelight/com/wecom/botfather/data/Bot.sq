@@ -1,0 +1,40 @@
+CREATE TABLE bot(
+    id Text NOT NULL PRIMARY KEY,
+    avatar Text,
+    name Text NOT NULL,
+    UNIQUE(id)
+);
+
+--debug data
+INSERT INTO bot (id, avatar, name)
+VALUES ("b7e5e59b-a838-4908-82e9-c330ebccaad8", NULL, "28号");
+
+
+--操作
+selectAll:
+SELECT *
+FROM bot;
+
+addNewOne:
+INSERT OR IGNORE INTO bot VALUES (?,?,?);
+
+updateName:
+UPDATE bot
+SET name = ?
+WHERE id = ?;
+
+updateAvatar:
+UPDATE bot
+SET avatar = ?
+WHERE id = ?;
+
+queryById:
+SELECT *
+FROM bot
+WHERE id = ?;
+
+deleteById:
+DELETE FROM bot WHERE id = ?;
+
+deleteAll:
+DELETE FROM bot;
