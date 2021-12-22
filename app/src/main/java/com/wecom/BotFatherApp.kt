@@ -14,6 +14,7 @@ class BotFatherApp : Application() {
     override fun onCreate() {
         super.onCreate()
         T.plant(Timber.DebugTree())
+        T.tag(this::class.java.simpleName)
 
         startKoin {
             androidContext(this@BotFatherApp)

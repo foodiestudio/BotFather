@@ -75,7 +75,6 @@ private val TEMPLATE = """
 @Composable
 fun ChatScreen(bot: BotBean, viewModel: ChatViewModel) {
     var chatMsg by remember { mutableStateOf(TEMPLATE) }
-//    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
