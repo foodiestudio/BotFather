@@ -85,7 +85,7 @@ private fun Content(viewModel: HomeViewModel) {
         },
         content = {
             Chats(bots) {
-                ChatActivity.start(context, MockData.bot.id)
+                ChatActivity.start(context, it)
             }
         },
         floatingActionButton = {
