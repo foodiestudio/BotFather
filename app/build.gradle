@@ -74,4 +74,8 @@ dependencies {
 
     // sql
     implementation("com.squareup.sqldelight:android-driver:1.5.3")
+
+    // jetpack
+    implementation "androidx.datastore:datastore:1.0.0"
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
 }
