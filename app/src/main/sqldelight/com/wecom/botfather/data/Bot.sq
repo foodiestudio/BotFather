@@ -11,6 +11,10 @@ INSERT INTO bot (id, avatar, name, platform)
 VALUES ("b7e5e59b-a838-4908-82e9-c330ebccaad8",
 "https://pic2.zhimg.com/v2-d41c2ceaed8f51999522f903672a521f_s.jpg", "28号", 1);
 
+INSERT INTO bot (id, avatar, name, platform)
+VALUES ("e6b9183943e71f9cee666a67ddb9763fc142e9b483a062c37a21ed1ca3a1cc85",
+"https://pic2.zhimg.com/v2-d41c2ceaed8f51999522f903672a521f_s.jpg", "29号", 2);
+
 
 --操作
 selectAll:

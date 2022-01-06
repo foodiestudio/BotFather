@@ -5,11 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wecom.botfather.sdk.BotBean
-import com.wecom.botfather.sdk.WeComBotHelper
+import com.wecom.botfather.sdk.helper.WeComBotHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.koin.java.KoinJavaComponent.inject
 
 class HomeViewModel(private val sdk: WeComBotHelper) : ViewModel() {
 
