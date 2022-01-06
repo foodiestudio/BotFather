@@ -86,7 +86,7 @@ private fun Content(viewModel: HomeViewModel) {
         },
         content = {
             Chats(bots) {
-                ChatActivity.start(context, it)
+                ChatActivity.start(context, it.id, it.platform)
             }
         },
         floatingActionButton = {
@@ -100,13 +100,13 @@ private fun Content(viewModel: HomeViewModel) {
 }
 
 @Composable
-fun Chats(bots: List<BotBean>, modifier: Modifier = Modifier, onClick: (String) -> Unit) {
+fun Chats(bots: List<BotBean>, modifier: Modifier = Modifier, onClick: (BotBean) -> Unit) {
     LazyColumn(modifier = modifier) {
         items(bots, key = { bot -> bot.id }) { bot ->
             Row(
                 modifier = Modifier
                     .fillParentMaxWidth()
-                    .clickable(onClick = { onClick(bot.id) })
+                    .clickable(onClick = { onClick(bot) })
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -121,7 +121,7 @@ fun Chats(bots: List<BotBean>, modifier: Modifier = Modifier, onClick: (String) 
                             }
                         ),
                         contentDescription = null,
-                        modifier = Modifier.size(48.dp).clip(CircleShape)
+                        modifier = Modifier.size(52.dp).padding(2.dp).clip(CircleShape)
                     )
                     ChatLabel(
                         bot = bot,

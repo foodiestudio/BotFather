@@ -3,6 +3,7 @@ package com.wecom.botfather.ui.chat
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -15,6 +16,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
@@ -22,10 +25,12 @@ import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.wecom.botfather.R
 import com.wecom.botfather.sdk.BotBean
+import com.wecom.botfather.sdk.Platform
 import com.wecom.botfather.sdk.TextMessage
 import com.wecom.botfather.ui.theme.BotFatherTheme
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -36,14 +41,27 @@ import java.util.*
  */
 class ChatActivity : ComponentActivity() {
 
-    private val viewModel: ChatViewModel by inject()
-
     private val botId: String by lazy {
         intent.getStringExtra(EXTRA_ID)!!
     }
 
+    private val botType: Platform by lazy {
+        Platform(intent.getLongExtra(EXTRA_TYPE, 0))!!
+    }
+
+    private val viewModel: ChatViewModel by inject { parametersOf(botType) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel.sendResult.observe(this, androidx.lifecycle.Observer {
+            it.doOnSuccess {
+                Toast.makeText(this, "Send Success.", Toast.LENGTH_SHORT).show()
+                onBackPressed()
+            }.doOnFail {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            }
+        })
 
         lifecycleScope.launch {
             viewModel.queryBotById(botId)?.let {
@@ -58,16 +76,21 @@ class ChatActivity : ComponentActivity() {
 
     companion object {
         private const val EXTRA_ID = "BotId"
+        private const val EXTRA_TYPE = "BotType"
 
-        fun start(context: Context, id: String) {
+        fun start(context: Context, id: String, platform: Platform) {
             val starter = Intent(context, ChatActivity::class.java)
                 .putExtra(EXTRA_ID, id)
+                .putExtra(EXTRA_TYPE, platform.type)
             context.startActivity(starter)
         }
     }
 }
 
-private val TEMPLATE = """
+/**
+ * 企业微信支持额外的 <font color>
+ */
+private val WeComTEMPLATE = """
         ## 群人数周变化
         最近一次更新: ${SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())}
         > Tuya 大群：<font color="comment">3508(-17)</font>
@@ -77,8 +100,9 @@ private val TEMPLATE = """
 
 @Composable
 fun ChatScreen(bot: BotBean, viewModel: ChatViewModel) {
-    var chatMsg by remember { mutableStateOf(TEMPLATE) }
+    var chatMsg by remember { mutableStateOf(WeComTEMPLATE) }
 
+    val context = LocalContext.current
     Scaffold(
         topBar = {
             TopAppBar(
@@ -99,13 +123,22 @@ fun ChatScreen(bot: BotBean, viewModel: ChatViewModel) {
                         Spacer(Modifier.size(12.dp))
                         Column {
                             Text(bot.name)
-                            Text(text = "Key: ${bot.id}", fontSize = 12.sp)
+                            Text(
+                                text = "Key: ${bot.id}",
+                                fontSize = 12.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
                         }
                     }
                 },
                 actions = {
                     IconButton(onClick = {
-                        viewModel.sendMsg(bot.id, TextMessage.Markdown(chatMsg))
+                        if (chatMsg.isBlank()) {
+                            Toast.makeText(context, "内容不能为空", Toast.LENGTH_SHORT).show()
+                        } else {
+                            viewModel.sendMsg(bot.id, TextMessage.Markdown(chatMsg))
+                        }
                     }) {
                         Icon(Icons.Default.Send, "send")
                     }
