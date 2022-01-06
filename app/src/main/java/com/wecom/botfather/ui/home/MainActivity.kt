@@ -160,7 +160,6 @@ fun ChatLabel(bot: BotBean, modifier: Modifier = Modifier) {
                 tint = Color.Unspecified
             )
         }
-        else -> throw IllegalArgumentException("Not support ${bot.platform} yet")
     }
 
 }
