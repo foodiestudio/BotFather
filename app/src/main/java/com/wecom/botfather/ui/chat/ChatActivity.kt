@@ -23,6 +23,7 @@ import coil.transform.CircleCropTransformation
 import com.wecom.botfather.R
 import com.wecom.botfather.sdk.BotBean
 import com.wecom.botfather.sdk.TextMessage
+import com.wecom.botfather.ui.theme.BotFatherTheme
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import java.text.SimpleDateFormat
@@ -47,7 +48,9 @@ class ChatActivity : ComponentActivity() {
         lifecycleScope.launch {
             viewModel.queryBotById(botId)?.let {
                 setContent {
-                    ChatScreen(it, viewModel)
+                    BotFatherTheme {
+                        ChatScreen(it, viewModel)
+                    }
                 }
             }
         }
