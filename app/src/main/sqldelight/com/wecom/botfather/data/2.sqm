@@ -1,0 +1,6 @@
+ALTER TABLE bot
+ADD platform INTEGER NOT NULL DEFAULT 0;
+
+UPDATE bot
+SET platform = 1
+WHERE id IN (SELECT id FROM bot);

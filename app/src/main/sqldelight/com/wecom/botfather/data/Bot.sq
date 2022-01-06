@@ -2,12 +2,14 @@ CREATE TABLE bot(
     id Text NOT NULL PRIMARY KEY,
     avatar Text,
     name Text NOT NULL,
+    platform INTEGER NOT NULL DEFAULT 0,
     UNIQUE(id)
 );
 
 --debug data
-INSERT INTO bot (id, avatar, name)
-VALUES ("b7e5e59b-a838-4908-82e9-c330ebccaad8", NULL, "28号");
+INSERT INTO bot (id, avatar, name, platform)
+VALUES ("b7e5e59b-a838-4908-82e9-c330ebccaad8",
+"https://pic2.zhimg.com/v2-d41c2ceaed8f51999522f903672a521f_s.jpg", "28号", 1);
 
 
 --操作
@@ -16,7 +18,7 @@ SELECT *
 FROM bot;
 
 addNewOne:
-INSERT OR IGNORE INTO bot VALUES (?,?,?);
+INSERT OR IGNORE INTO bot VALUES (?,?,?,?);
 
 updateName:
 UPDATE bot

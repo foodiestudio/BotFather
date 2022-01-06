@@ -6,10 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -24,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,8 +31,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.wecom.botfather.R
-import com.wecom.botfather.mock.MockData
 import com.wecom.botfather.sdk.BotBean
+import com.wecom.botfather.sdk.Platform
 import com.wecom.botfather.ui.chat.ChatActivity
 import com.wecom.botfather.ui.settings.SettingsActivity
 import com.wecom.botfather.ui.theme.BotFatherTheme
@@ -113,18 +111,24 @@ fun Chats(bots: List<BotBean>, onClick: (String) -> Unit) {
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = rememberImagePainter(
-                        data = bot.avatar,
-                        builder = {
-                            crossfade(true)
-                            placeholder(R.mipmap.ic_launcher)
-                            transformations(CircleCropTransformation())
-                        }
-                    ),
-                    contentDescription = null,
-                    modifier = Modifier.size(48.dp).clip(CircleShape)
-                )
+                Box {
+                    Image(
+                        painter = rememberImagePainter(
+                            data = bot.avatar,
+                            builder = {
+                                crossfade(true)
+                                placeholder(R.mipmap.ic_launcher)
+                                transformations(CircleCropTransformation())
+                            }
+                        ),
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp).clip(CircleShape)
+                    )
+                    ChatLabel(
+                        bot = bot,
+                        modifier = Modifier.size(16.dp).align(Alignment.BottomEnd)
+                    )
+                }
                 Spacer(Modifier.size(8.dp))
                 Text(text = bot.name)
             }
@@ -133,13 +137,35 @@ fun Chats(bots: List<BotBean>, onClick: (String) -> Unit) {
     }
 }
 
+@Composable
+fun ChatLabel(bot: BotBean, modifier: Modifier = Modifier) {
+    when (bot.platform) {
+        Platform.WeCom -> {
+            Icon(
+                painter = painterResource(R.drawable.ic_wecom),
+                contentDescription = "wecom bot",
+                modifier = modifier
+            )
+        }
+        Platform.DingTalk -> {
+            Icon(
+                painter = painterResource(R.drawable.ic_dingtalk),
+                contentDescription = "dingtalk bot",
+                modifier = modifier
+            )
+        }
+        else -> throw IllegalArgumentException("Not support ${bot.platform} yet")
+    }
+
+}
+
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     BotFatherTheme {
         Chats(
             listOf(
-                BotBean("111")
+                BotBean("111", Platform.DingTalk)
             )
         ) {
         }

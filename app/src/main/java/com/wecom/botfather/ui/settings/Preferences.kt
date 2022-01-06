@@ -17,7 +17,7 @@ fun PreferenceWidget() {
 }
 
 /**
- * 配合 Prefrence 使用，分组展示
+ * 配合 Preference 使用，分组展示
  */
 @Composable
 fun PreferenceGroup(
