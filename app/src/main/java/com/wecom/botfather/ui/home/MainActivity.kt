@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,6 +22,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -94,15 +97,11 @@ private fun Content(viewModel: HomeViewModel) {
             }
         }
     )
-//                // A surface container using the 'background' color from the theme
-//                Surface(color = MaterialTheme.colors.background) {
-//
-//                }
 }
 
 @Composable
-fun Chats(bots: List<BotBean>, onClick: (String) -> Unit) {
-    LazyColumn {
+fun Chats(bots: List<BotBean>, modifier: Modifier = Modifier, onClick: (String) -> Unit) {
+    LazyColumn(modifier = modifier) {
         items(bots, key = { bot -> bot.id }) { bot ->
             Row(
                 modifier = Modifier
@@ -126,10 +125,15 @@ fun Chats(bots: List<BotBean>, onClick: (String) -> Unit) {
                     )
                     ChatLabel(
                         bot = bot,
-                        modifier = Modifier.size(16.dp).align(Alignment.BottomEnd)
+                        modifier = Modifier.size(18.dp)
+                            .align(Alignment.BottomEnd)
+                            .border(
+                                BorderStroke(1.dp, Color.White),
+                                CircleShape
+                            )
                     )
                 }
-                Spacer(Modifier.size(8.dp))
+                Spacer(Modifier.size(12.dp))
                 Text(text = bot.name)
             }
             Divider()
@@ -142,16 +146,18 @@ fun ChatLabel(bot: BotBean, modifier: Modifier = Modifier) {
     when (bot.platform) {
         Platform.WeCom -> {
             Icon(
-                painter = painterResource(R.drawable.ic_wecom),
+                painter = painterResource(id = R.drawable.ic_wecom),
                 contentDescription = "wecom bot",
-                modifier = modifier
+                modifier = modifier,
+                tint = Color.Unspecified
             )
         }
         Platform.DingTalk -> {
             Icon(
-                painter = painterResource(R.drawable.ic_dingtalk),
+                painter = painterResource(id = R.drawable.ic_dingtalk),
                 contentDescription = "dingtalk bot",
-                modifier = modifier
+                modifier = modifier,
+                tint = Color.Unspecified
             )
         }
         else -> throw IllegalArgumentException("Not support ${bot.platform} yet")
@@ -165,7 +171,7 @@ fun DefaultPreview() {
     BotFatherTheme {
         Chats(
             listOf(
-                BotBean("111", Platform.DingTalk)
+                BotBean("111", Platform.WeCom)
             )
         ) {
         }
