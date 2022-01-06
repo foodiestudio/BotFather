@@ -24,7 +24,8 @@ class WeComBotHelper(private val botQueries: BotQueries) {
         botQueries.addNewOne(
             id = bot.id,
             avatar = bot.avatar,
-            name = bot.name
+            name = bot.name,
+            platform = bot.platform.type
         )
     }
 
