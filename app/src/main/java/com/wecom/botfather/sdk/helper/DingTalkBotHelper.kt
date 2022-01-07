@@ -25,7 +25,7 @@ class DingTalkBotHelper(botQueries: BotQueries) : BotHelper(botQueries) {
     /**
      * FIXME 临时测试用
      */
-    private val secret = "SEC9e0703814ab013869aeb8091b2142f63caa6ec6dc6c5f31f700f25f129c05359"
+    private val secret = "SECfc47c4441a3b48e6388a652088ee8a5ab3274f5d1ddc19e60c8a1c0093e97c72"
 
     override suspend fun sendMsg(botId: String, msg: TextMessage): Response {
         val timestamp = System.currentTimeMillis()
