@@ -1,6 +1,7 @@
 ## BotFather
 > 就是图一乐
-一款用于发送简单的消息的App。
+
+一款群机器人的发送端，用于发送简单的消息到对应的App。
 
 详细介绍见 [Wiki](https://www.yuque.com/docs/share/2a20a0f7-65d8-43e7-bbb8-6a8f81ceff4a?)
 
