@@ -21,7 +21,7 @@ class MockService : WeComService, DingTalkService {
             ============================
         """.trimIndent()
         )
-        return Response.Fail(123, "???")
+        return failResp(123, "???")
     }
 
     override suspend fun sendMsgWithSign(
@@ -40,7 +40,7 @@ class MockService : WeComService, DingTalkService {
             ============================
         """.trimIndent()
         )
-        return Response.Fail(123, "???")
+        return failResp(123, "???")
     }
 
     override suspend fun sendMsgWithoutSign(token: String, msg: DingTalkMsg): Response {
@@ -54,6 +54,13 @@ class MockService : WeComService, DingTalkService {
             ============================
         """.trimIndent()
         )
-        return Response.Fail(123, "???")
+        return failResp(123, "???")
     }
 }
+
+private fun successResp() = Response(0, "")
+
+private fun failResp(
+    errcode: Int,
+    errmsg: String
+) = Response(errcode, errmsg)
