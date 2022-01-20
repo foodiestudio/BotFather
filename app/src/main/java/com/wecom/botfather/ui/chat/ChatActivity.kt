@@ -91,11 +91,7 @@ class ChatActivity : ComponentActivity() {
  * 企业微信支持额外的 <font color>
  */
 private val WeComTEMPLATE = """
-        ## 群人数周变化
-        最近一次更新: ${SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())}
-        > Tuya 大群：<font color="comment">3508(-17)</font>
-        > 智慧商业大群：<font color="comment">543(-7)</font> 
-        > APP: <font color="comment">255(-1)</font>
+        <font color="comment">新年快乐</font>
     """.trimIndent()
 
 @Composable
