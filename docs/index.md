@@ -1,17 +1,12 @@
-# Welcome to MkDocs
+> 就是图一乐
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+一款群机器人的发送端，用于发送简单的消息到对应的App。
 
-## Commands
+详细介绍见 [Wiki](https://www.yuque.com/docs/share/2a20a0f7-65d8-43e7-bbb8-6a8f81ceff4a?)
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+### 涉及的组件
 
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+- Jetpack Compose：主要就是想熟悉下这个的使用
+- Koin：依赖注入库
+- SqlDelight
+- Jetpack 其他组件：DataStore 等

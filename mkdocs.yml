@@ -10,10 +10,10 @@ remote_branch: gh-pages
 theme:
   name: 'material'
   palette:
-    primary: 'deep purple'
+    primary: 'deep orange'
     accent: 'pink'
   features:
-    - navigation.tabs
+#    - navigation.tabs
 
 #extra_css:
 #  - 'css/app.css'
@@ -29,3 +29,7 @@ plugins:
 extra:
   versions:
     botfather: '0.0.1'
+
+nav:
+  - 'Home':
+      - 'Overview': index.md
