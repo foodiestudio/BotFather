@@ -6,12 +6,22 @@ site_description: "BotFather :father for bot "
 site_author: Foodie Studio
 copyright: 'Copyright &copy; 2022 Foodie Studio'
 remote_branch: gh-pages
+edit_uri: edit/main/docs/
 
 theme:
+  language: zh
   name: 'material'
   palette:
-    primary: 'deep orange'
-    accent: 'pink'
+    - scheme: default
+      primary: 'deep orange'
+      accent: 'pink'
+      toggle:
+        icon: material/brightness-4
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-7
+        name: Switch to light mode
   features:
 #    - navigation.tabs
 
@@ -24,6 +34,7 @@ markdown_extensions:
 
 plugins:
   - search
+  - git-revision-date
 #  - macros
 
 extra:
