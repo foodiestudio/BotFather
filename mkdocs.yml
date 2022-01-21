@@ -1,1 +1,31 @@
-site_name: My Docs
+site_name: BotFather
+site_url: https://foodiestudio.github.io/BotFather/
+repo_name: BotFather
+repo_url: https://github.com/foodiestudio/BotFather
+site_description: "BotFather :father for bot "
+site_author: Foodie Studio
+copyright: 'Copyright &copy; 2022 Foodie Studio'
+remote_branch: gh-pages
+
+theme:
+  name: 'material'
+  palette:
+    primary: 'deep purple'
+    accent: 'pink'
+  features:
+    - navigation.tabs
+
+#extra_css:
+#  - 'css/app.css'
+
+markdown_extensions:
+  - codehilite:
+      guess_lang: false
+
+plugins:
+  - search
+#  - macros
+
+extra:
+  versions:
+    botfather: '0.0.1'
