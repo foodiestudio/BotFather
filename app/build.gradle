@@ -71,7 +71,7 @@ dependencies {
     implementation "io.coil-kt:coil-compose:1.4.0"
 
     // Koin for Android
-    implementation("io.insert-koin:koin-android:3.1.5")
+    implementation("io.insert-koin:koin-android:3.2.0")
 
     // sql
     implementation("com.squareup.sqldelight:android-driver:1.5.3")
