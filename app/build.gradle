@@ -1,7 +1,7 @@
 plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
-    id 'com.squareup.sqldelight'
+    alias libs.plugins.android.application
+    alias libs.plugins.kotlin.android
+    alias libs.plugins.sqldelight
 }
 
 android {
@@ -38,7 +38,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion compose_version
+        kotlinCompilerExtensionVersion libs.versions.compose.get()
     }
     packagingOptions {
         resources {
@@ -48,35 +48,16 @@ android {
 }
 
 dependencies {
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'androidx.core:core-ktx:1.7.0'
-//    implementation 'androidx.appcompat:appcompat:1.3.1'
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation "androidx.compose.ui:ui:$compose_version"
-    implementation "androidx.compose.material:material:$compose_version"
-    implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
-    implementation 'androidx.activity:activity-compose:1.3.1'
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
-    debugImplementation "com.github.foodiestudio:dev-tools:0.0.1"
+    implementation libs.bundles.network
+    implementation libs.bundles.jetpack
+    implementation libs.bundles.compose
+    debugImplementation libs.bundles.debug
+    testImplementation libs.bundles.unit.tests
+    androidTestImplementation libs.bundles.android.tests
 
-    implementation 'com.jakewharton.timber:timber:5.0.1'
-    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
-
-    implementation "io.coil-kt:coil-compose:1.4.0"
-
-    // Koin for Android
-    implementation("io.insert-koin:koin-android:3.1.5")
-
-    // sql
-    implementation("com.squareup.sqldelight:android-driver:1.5.3")
-
-    // jetpack
-    implementation "androidx.datastore:datastore:1.0.0"
-    implementation "androidx.datastore:datastore-preferences:1.0.0"
+    implementation libs.logcat
+    implementation libs.coil
+    implementation libs.koin
+    implementation libs.sql
+    implementation libs.ctc
 }
