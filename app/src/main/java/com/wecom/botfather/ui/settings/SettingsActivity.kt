@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -18,10 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.edit
+import com.github.foodiestudio.application.theme.ApplicationTheme
 import com.wecom.ABORT_REQUEST_KEY
-import com.wecom.BotFatherApp
 import com.wecom.botfather.BuildConfig
-import com.wecom.botfather.ui.theme.BotFatherTheme
 import com.wecom.dataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -39,7 +37,7 @@ class SettingsActivity : ComponentActivity() {
             it[ABORT_REQUEST_KEY] ?: BuildConfig.DEBUG
         }
         setContent {
-            BotFatherTheme {
+            ApplicationTheme {
                 val scope = rememberCoroutineScope()
                 SettingScreen(prefValue) { newValue ->
                     scope.launch {

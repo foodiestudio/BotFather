@@ -60,4 +60,5 @@ dependencies {
     implementation libs.koin
     implementation libs.sql
     implementation libs.ctc
+    implementation libs.theme
 }

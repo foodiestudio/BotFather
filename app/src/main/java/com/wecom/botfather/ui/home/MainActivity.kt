@@ -33,12 +33,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
+import com.github.foodiestudio.application.theme.ApplicationTheme
 import com.wecom.botfather.R
 import com.wecom.botfather.sdk.BotBean
 import com.wecom.botfather.sdk.Platform
 import com.wecom.botfather.ui.chat.ChatActivity
 import com.wecom.botfather.ui.settings.SettingsActivity
-import com.wecom.botfather.ui.theme.BotFatherTheme
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            BotFatherTheme {
+            ApplicationTheme {
                 Content(homeViewModel)
             }
         }
@@ -167,7 +167,7 @@ fun ChatLabel(bot: BotBean, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    BotFatherTheme {
+    ApplicationTheme {
         Chats(
             listOf(
                 BotBean("111", Platform.WeCom)

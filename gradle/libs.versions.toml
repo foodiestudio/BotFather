@@ -32,6 +32,7 @@ sql = "com.squareup.sqldelight:android-driver:1.5.3"
 
 ctc = "com.github.kkoshin:ctc:0.1.1"
 dev-tools = "com.github.foodiestudio:dev-tools:0.0.1"
+theme = "com.github.foodiestudio:app-theme:0.1.3"
 
 # for test
 junit = "junit:junit:4.+"

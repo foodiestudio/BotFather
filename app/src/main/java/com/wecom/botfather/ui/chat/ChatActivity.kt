@@ -23,16 +23,14 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
+import com.github.foodiestudio.application.theme.ApplicationTheme
 import com.wecom.botfather.R
 import com.wecom.botfather.sdk.BotBean
 import com.wecom.botfather.sdk.Platform
 import com.wecom.botfather.sdk.TextMessage
-import com.wecom.botfather.ui.theme.BotFatherTheme
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
-import java.text.SimpleDateFormat
-import java.util.*
 
 /**
  * TODO
@@ -66,7 +64,7 @@ class ChatActivity : ComponentActivity() {
         lifecycleScope.launch {
             viewModel.queryBotById(botId)?.let {
                 setContent {
-                    BotFatherTheme {
+                    ApplicationTheme {
                         ChatScreen(it, viewModel)
                     }
                 }
@@ -114,7 +112,9 @@ fun ChatScreen(bot: BotBean, viewModel: ChatViewModel) {
                                 }
                             ),
                             contentDescription = null,
-                            modifier = Modifier.size(32.dp).clip(CircleShape)
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
                         )
                         Spacer(Modifier.size(12.dp))
                         Column {
