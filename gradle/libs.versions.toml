@@ -1,7 +1,7 @@
 [versions]
-agp = "7.0.3"
-kotlin = { strictly = "1.5.31" }
-compose = "1.0.5"
+agp = "7.2.0"
+kotlin = { strictly = "1.7.0" }
+compose = "1.2.0"
 retrofit = "2.9.0"
 
 [plugins]

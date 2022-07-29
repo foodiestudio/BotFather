@@ -1,5 +1,6 @@
 package com.wecom.botfather.ui.home
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -67,6 +68,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 private fun Content(viewModel: HomeViewModel) {
     val context = LocalContext.current
@@ -85,8 +87,8 @@ private fun Content(viewModel: HomeViewModel) {
                 })
         },
         content = {
-            Chats(bots) {
-                ChatActivity.start(context, it.id, it.platform)
+            Chats(bots) { bot ->
+                ChatActivity.start(context, bot.id, bot.platform)
             }
         },
         floatingActionButton = {
@@ -121,11 +123,15 @@ fun Chats(bots: List<BotBean>, modifier: Modifier = Modifier, onClick: (BotBean)
                             }
                         ),
                         contentDescription = null,
-                        modifier = Modifier.size(52.dp).padding(2.dp).clip(CircleShape)
+                        modifier = Modifier
+                            .size(52.dp)
+                            .padding(2.dp)
+                            .clip(CircleShape)
                     )
                     ChatLabel(
                         bot = bot,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier
+                            .size(18.dp)
                             .align(Alignment.BottomEnd)
                             .border(
                                 BorderStroke(1.dp, Color.White),
