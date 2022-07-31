@@ -166,6 +166,14 @@ fun ChatLabel(bot: BotBean, modifier: Modifier = Modifier) {
                 tint = Color.Unspecified
             )
         }
+        Platform.Lark -> {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_lark),
+                contentDescription = "lark bot",
+                modifier = modifier,
+                tint = Color.Unspecified
+            )
+        }
     }
 
 }

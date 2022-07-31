@@ -10,6 +10,7 @@ import com.github.foodiestudio.botfather.di.appModule
 import com.github.foodiestudio.botfather.di.serviceModule
 import com.github.foodiestudio.botfather.mock.MockService
 import com.github.foodiestudio.botfather.sdk.service.DingTalkService
+import com.github.foodiestudio.botfather.sdk.service.LarkService
 import com.github.foodiestudio.botfather.sdk.service.WeComService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -51,6 +52,7 @@ class BotFatherApp : Application(), CoroutineScope by MainScope() {
         private val debugModule = module {
             single<WeComService> { MockService() }
             single<DingTalkService> { MockService() }
+            single<LarkService> { MockService() }
         }
 
         /**

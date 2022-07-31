@@ -52,14 +52,14 @@ class ChatActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.sendResult.observe(this, androidx.lifecycle.Observer {
+        viewModel.sendResult.observe(this) {
             it.doOnSuccess {
                 Toast.makeText(this, "Send Success.", Toast.LENGTH_SHORT).show()
                 onBackPressed()
             }.doOnFail {
                 Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
             }
-        })
+        }
 
         lifecycleScope.launch {
             viewModel.queryBotById(botId)?.let {
@@ -92,9 +92,14 @@ private val WeComTEMPLATE = """
         <font color="comment">新年快乐</font>
     """.trimIndent()
 
+private val TEMPLATE = """
+        新年快乐
+    """.trimIndent()
+
 @Composable
 fun ChatScreen(bot: BotBean, viewModel: ChatViewModel) {
-    var chatMsg by remember { mutableStateOf(WeComTEMPLATE) }
+    val template = if (bot.platform == Platform.WeCom) WeComTEMPLATE else TEMPLATE
+    var chatMsg by remember { mutableStateOf(template) }
 
     val context = LocalContext.current
     Scaffold(
@@ -133,7 +138,7 @@ fun ChatScreen(bot: BotBean, viewModel: ChatViewModel) {
                         if (chatMsg.isBlank()) {
                             Toast.makeText(context, "内容不能为空", Toast.LENGTH_SHORT).show()
                         } else {
-                            viewModel.sendMsg(bot.id, TextMessage.Markdown(chatMsg))
+                            viewModel.sendMsg(bot.id, TextMessage.PlainText(chatMsg))
                         }
                     }) {
                         Icon(Icons.Default.Send, "send")

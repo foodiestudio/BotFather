@@ -12,6 +12,7 @@ sqldelight = { id = "com.squareup.sqldelight", version = "1.5.3" }
 [libraries]
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
+okhttp-logging = "com.squareup.okhttp3:logging-interceptor:4.10.0"
 
 androidx-ktx = "androidx.core:core-ktx:1.7.0"
 material = "com.google.android.material:material:1.4.0"
@@ -43,7 +44,7 @@ espresso = "androidx.test.espresso:espresso-core:3.4.0"
 [bundles]
 jetpack = ["androidx-ktx", "material", "lifecycle-ktx", "datastore", "datastore-preferences"]
 compose = ["compose-ui", "compose-material", "activity-compose", "compose-livedata"]
-network = ["retrofit", "retrofit-converter-gson"]
+network = ["retrofit", "retrofit-converter-gson", "okhttp-logging"]
 debug = ["compose-ui-tooling", "dev-tools"]
 unit-tests = ["junit"]
 android-tests = ["junit-android", "junit-compose", "espresso"]

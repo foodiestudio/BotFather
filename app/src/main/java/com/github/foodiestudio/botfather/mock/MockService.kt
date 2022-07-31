@@ -2,13 +2,11 @@ package com.github.foodiestudio.botfather.mock
 
 import com.github.foodiestudio.botfather.T
 import com.github.foodiestudio.botfather.sdk.Response
-import com.github.foodiestudio.botfather.sdk.service.DingTalkMsg
-import com.github.foodiestudio.botfather.sdk.service.DingTalkService
-import com.github.foodiestudio.botfather.sdk.service.WeComMsg
+import com.github.foodiestudio.botfather.sdk.service.*
 import com.github.foodiestudio.botfather.sdk.service.WeComService
 import kotlinx.coroutines.delay
 
-class MockService : WeComService, DingTalkService {
+class MockService : WeComService, DingTalkService, LarkService {
 
     override suspend fun sendMsg(key: String, msg: WeComMsg): Response {
         delay(1000)
@@ -51,6 +49,20 @@ class MockService : WeComService, DingTalkService {
             to $token:
             ----------------------------
             ${msg.markdown?.text ?: msg.text?.content}
+            ============================
+        """.trimIndent()
+        )
+        return failResp(123, "???")
+    }
+
+    override suspend fun sendMsg(id: String, msg: LarkTextMsg): Response {
+        delay(1000)
+        T.i(
+            """
+            ============================
+            to $id:
+            ----------------------------
+            ${msg.content.text}
             ============================
         """.trimIndent()
         )

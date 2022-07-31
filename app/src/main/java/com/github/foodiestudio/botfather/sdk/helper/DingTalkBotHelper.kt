@@ -30,12 +30,12 @@ class DingTalkBotHelper(botQueries: BotQueries) : BotHelper(botQueries) {
     override suspend fun sendMsg(botId: String, msg: TextMessage): Response {
         val timestamp = System.currentTimeMillis()
 
-        return when (msg) {
+        val response = when (msg) {
             is TextMessage.Markdown -> {
                 service.sendMsgWithSign(
                     botId,
                     timestamp,
-                    sign(timestamp),
+                    sign(secret, timestamp),
                     DingTalkMsg(
                         "markdown",
                         null,
@@ -47,14 +47,44 @@ class DingTalkBotHelper(botQueries: BotQueries) : BotHelper(botQueries) {
                 service.sendMsgWithSign(
                     botId,
                     timestamp,
-                    sign(timestamp),
+                    sign(secret, timestamp),
                     DingTalkMsg("text", DingTalkContent(msg.content), null)
                 )
             }
         }
+        return convertErrorMsg(response)
     }
 
-    private fun sign(timestamp: Long): String {
+    private val dingTalkErrMsgs = mapOf(
+        "keywords not in content" to "当前消息并不包含任何关键词，请检查安全设置",
+        "invalid timestamp" to "时间戳检验失败",
+        "sign not match" to "签名校验不通过，请检查安全设置",
+        "not in whitelist" to "当前网络环境不在白名单里，请检查安全设置"
+    )
+
+    private fun convertErrorMsg(origin: Response): Response {
+        var result = origin
+        if (origin.errcode == 310000 /*消息校验没通过*/) {
+            dingTalkErrMsgs.forEach { (key, value) ->
+                if (origin.errmsg.contains(key)) {
+                    result = origin.copy(errmsg = value)
+                    return@forEach
+                }
+            }
+            origin.errmsg.split(";").firstOrNull {
+                it.contains("description:")
+            }?.removePrefix("description:")?.let {
+                return origin.copy(errmsg = it)
+            }
+        }
+        return result
+    }
+
+    /**
+     * 以密钥为key，把 timestamp + "\n" + 密钥 当做待签名字符串，使用 HmacSHA256 算法计算签名，再进行 Base64 编码。
+     * https://open.dingtalk.com/document/group/customize-robot-security-settings
+     */
+    private fun sign(secret: String, timestamp: Long): String {
         val stringToSign = """
             $timestamp
             $secret
