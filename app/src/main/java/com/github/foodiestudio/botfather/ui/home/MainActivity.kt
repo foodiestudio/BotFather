@@ -20,28 +20,37 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewmodel.ViewModelInitializer
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.github.foodiestudio.application.theme.ApplicationTheme
 import com.github.foodiestudio.botfather.R
 import com.github.foodiestudio.botfather.sdk.BotBean
 import com.github.foodiestudio.botfather.sdk.Platform
+import com.github.foodiestudio.botfather.ui.NavGraphs
 import com.github.foodiestudio.botfather.ui.chat.ChatActivity
-import com.github.foodiestudio.botfather.ui.settings.SettingsActivity
+import com.github.foodiestudio.botfather.ui.destinations.SettingScreenDestination
+import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
 
 /**
  * 类似与IM那样，首页展示 Bot 列表，底部有个 FAB(添加)
@@ -51,28 +60,38 @@ import org.koin.android.ext.android.inject
  * - 设置页面
  */
 class MainActivity : ComponentActivity() {
-    private val homeViewModel: HomeViewModel by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ApplicationTheme {
-                Content(homeViewModel)
-            }
-        }
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                homeViewModel.fetchData()
+                DestinationsNavHost(
+                    navGraph = NavGraphs.root,
+                )
             }
         }
     }
 }
 
+@Destination
+@RootNavGraph(start = true)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-private fun Content(viewModel: HomeViewModel) {
+fun MainScreen(
+    navigator: DestinationsNavigator
+) {
+    val viewModel = viewModel<HomeViewModel>()
     val context = LocalContext.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
     val bots by viewModel.bots.observeAsState(emptyList())
+    val scope = rememberCoroutineScope()
+
+    scope.launch {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            viewModel.fetchData()
+        }
+    }
+
     Scaffold(
         backgroundColor = MaterialTheme.colors.background,
         topBar = {
@@ -80,7 +99,7 @@ private fun Content(viewModel: HomeViewModel) {
                 title = { Text(stringResource(R.string.app_name)) },
                 actions = {
                     IconButton(onClick = {
-                        SettingsActivity.start(context)
+                        navigator.navigate(SettingScreenDestination)
                     }) {
                         Icon(Icons.Default.Settings, "settings")
                     }

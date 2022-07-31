@@ -2,6 +2,7 @@ plugins {
     alias libs.plugins.android.application
     alias libs.plugins.kotlin.android
     alias libs.plugins.sqldelight
+    alias libs.plugins.ksp
 }
 
 android {
@@ -44,6 +45,14 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+
+    applicationVariants.all { variant ->
+        kotlin.sourceSets {
+            getByName(variant.name) {
+                kotlin.srcDir("build/generated/ksp/${variant.name}/kotlin")
+            }
+        }
+    }
 }
 
 dependencies {
@@ -60,4 +69,6 @@ dependencies {
     implementation libs.sql
     implementation libs.ctc
     implementation libs.theme
+    implementation libs.compose.destinations.core
+    ksp libs.compose.destinations.ksp
 }
