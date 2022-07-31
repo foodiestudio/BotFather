@@ -21,7 +21,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 val uiModules = module {
-    viewModel { HomeViewModel(get()) }
     viewModel { params -> ChatViewModel(params.get()) }
 }
 
