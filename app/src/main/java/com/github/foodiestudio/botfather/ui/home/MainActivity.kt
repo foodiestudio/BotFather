@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -46,7 +47,10 @@ import com.github.foodiestudio.botfather.sdk.Platform
 import com.github.foodiestudio.botfather.ui.NavGraphs
 import com.github.foodiestudio.botfather.ui.chat.ChatActivity
 import com.github.foodiestudio.botfather.ui.destinations.SettingScreenDestination
+import com.github.foodiestudio.botfather.ui.theme.DefaultTransition
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -61,19 +65,22 @@ import kotlinx.coroutines.launch
  */
 class MainActivity : ComponentActivity() {
 
+    @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialNavigationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val engine = rememberAnimatedNavHostEngine()
             ApplicationTheme {
                 DestinationsNavHost(
                     navGraph = NavGraphs.root,
+                    engine = engine,
                 )
             }
         }
     }
 }
 
-@Destination
+@Destination(style = DefaultTransition::class)
 @RootNavGraph(start = true)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable

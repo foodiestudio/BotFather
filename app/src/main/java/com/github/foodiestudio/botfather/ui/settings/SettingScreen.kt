@@ -16,6 +16,7 @@ import androidx.datastore.preferences.core.edit
 import com.github.foodiestudio.botfather.ABORT_REQUEST_KEY
 import com.github.foodiestudio.botfather.BuildConfig
 import com.github.foodiestudio.botfather.dataStore
+import com.github.foodiestudio.botfather.ui.theme.DefaultTransition
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.spec.DestinationStyle
 import kotlinx.coroutines.flow.Flow
@@ -26,7 +27,7 @@ import kotlinx.coroutines.launch
  * TODO
  * - 导出/导入数据
  */
-@Destination
+@Destination(style = DefaultTransition::class)
 @Composable
 fun SettingScreen() {
     val context = LocalContext.current
