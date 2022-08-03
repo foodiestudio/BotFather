@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -48,6 +49,8 @@ import com.github.foodiestudio.botfather.ui.NavGraphs
 import com.github.foodiestudio.botfather.ui.chat.ChatActivity
 import com.github.foodiestudio.botfather.ui.destinations.SettingScreenDestination
 import com.github.foodiestudio.botfather.ui.theme.DefaultTransition
+import com.github.kkoshin.ctc.compose.山茶红
+import com.github.kkoshin.ctc.compose.蓝绿
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
@@ -130,28 +133,29 @@ fun MainScreen(
     )
 }
 
-val dragThreshold = 4.dp.value
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun Chats(bots: List<BotBean>, modifier: Modifier = Modifier, onClick: (BotBean) -> Unit) {
+    val widthPx = with(LocalDensity.current) { 360.dp.toPx() }
+    val swipeThreshold = with(LocalDensity.current) { 1.dp.toPx() }
+
     LazyColumn(modifier = modifier) {
         items(bots, key = { bot -> bot.id }) { bot ->
-            var offset by remember {
-                mutableStateOf(0f)
-            }
-            val isDrag by remember(bots) {
-                derivedStateOf { abs(offset) > dragThreshold /*不是很严谨的一个阈值*/ }
+            val swipeableState = rememberSwipeableState(0)
+            val offset by remember {
+                derivedStateOf { swipeableState.offset.value }
             }
             Row(
                 modifier = Modifier
                     .fillParentMaxWidth()
-                    .background(if (offset > 0) Color.Green else Color.Red)
-                    .scrollable(
-                        orientation = Orientation.Horizontal,
-                        state = rememberScrollableState { delta ->
-                            offset += delta
-                            delta
-                        }),
+                    .background(if (offset > 0) 蓝绿 else 山茶红)
+                    .swipeable(
+                        state = swipeableState,
+                        anchors = mapOf(0f to 0, widthPx to 1),
+                        thresholds = { _, _ -> FractionalThreshold(0.5f) },
+                        orientation = Orientation.Horizontal
+                    )
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -160,7 +164,17 @@ fun Chats(bots: List<BotBean>, modifier: Modifier = Modifier, onClick: (BotBean)
                         .offset { IntOffset(offset.roundToInt(), 0) }
                         .background(
                             Color.White,
-                            shape = if (isDrag) RoundedCornerShape(8.dp) else RoundedCornerShape(0f)
+                            shape = when {
+                                offset > 0 && offset > swipeThreshold -> RoundedCornerShape(
+                                    topStart = 8.dp,
+                                    bottomStart = 8.dp
+                                )
+                                offset < 0 && -offset > swipeThreshold -> RoundedCornerShape(
+                                    topEnd = 8.dp,
+                                    bottomEnd = 8.dp
+                                )
+                                else -> RoundedCornerShape(0f)
+                            }
                         )
                         .clickable(onClick = { onClick(bot) })
                         .padding(16.dp)
@@ -194,14 +208,6 @@ fun Chats(bots: List<BotBean>, modifier: Modifier = Modifier, onClick: (BotBean)
                     }
                     Spacer(Modifier.size(12.dp))
                     Text(text = bot.name)
-                }
-                if (offset < 0) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_lark), contentDescription = "",
-                        modifier = Modifier
-                            .padding(start = 16.dp)
-                            .align(Alignment.CenterVertically)
-                    )
                 }
             }
             Divider()
