@@ -6,22 +6,21 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +30,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -55,6 +55,9 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
+import kotlin.math.abs
+import kotlin.math.absoluteValue
+import kotlin.math.roundToInt
 
 /**
  * 类似与IM那样，首页展示 Bot 列表，底部有个 FAB(添加)
@@ -127,46 +130,79 @@ fun MainScreen(
     )
 }
 
+val dragThreshold = 4.dp.value
+
 @Composable
 fun Chats(bots: List<BotBean>, modifier: Modifier = Modifier, onClick: (BotBean) -> Unit) {
     LazyColumn(modifier = modifier) {
         items(bots, key = { bot -> bot.id }) { bot ->
+            var offset by remember {
+                mutableStateOf(0f)
+            }
+            val isDrag by remember(bots) {
+                derivedStateOf { abs(offset) > dragThreshold /*不是很严谨的一个阈值*/ }
+            }
             Row(
                 modifier = Modifier
                     .fillParentMaxWidth()
-                    .clickable(onClick = { onClick(bot) })
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .background(if (offset > 0) Color.Green else Color.Red)
+                    .scrollable(
+                        orientation = Orientation.Horizontal,
+                        state = rememberScrollableState { delta ->
+                            offset += delta
+                            delta
+                        }),
             ) {
-                Box {
-                    Image(
-                        painter = rememberImagePainter(
-                            data = bot.avatar,
-                            builder = {
-                                crossfade(true)
-                                placeholder(R.mipmap.ic_launcher)
-                                transformations(CircleCropTransformation())
-                            }
-                        ),
-                        contentDescription = null,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .offset { IntOffset(offset.roundToInt(), 0) }
+                        .background(
+                            Color.White,
+                            shape = if (isDrag) RoundedCornerShape(8.dp) else RoundedCornerShape(0f)
+                        )
+                        .clickable(onClick = { onClick(bot) })
+                        .padding(16.dp)
+                ) {
+                    Box {
+                        Image(
+                            painter = rememberImagePainter(
+                                data = bot.avatar,
+                                builder = {
+                                    crossfade(true)
+                                    placeholder(R.mipmap.ic_launcher)
+                                    transformations(CircleCropTransformation())
+                                }
+                            ),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(52.dp)
+                                .padding(2.dp)
+                                .clip(CircleShape)
+                        )
+                        ChatLabel(
+                            bot = bot,
+                            modifier = Modifier
+                                .size(18.dp)
+                                .align(Alignment.BottomEnd)
+                                .border(
+                                    BorderStroke(1.dp, Color.White),
+                                    CircleShape
+                                )
+                        )
+                    }
+                    Spacer(Modifier.size(12.dp))
+                    Text(text = bot.name)
+                }
+                if (offset < 0) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_lark), contentDescription = "",
                         modifier = Modifier
-                            .size(52.dp)
-                            .padding(2.dp)
-                            .clip(CircleShape)
-                    )
-                    ChatLabel(
-                        bot = bot,
-                        modifier = Modifier
-                            .size(18.dp)
-                            .align(Alignment.BottomEnd)
-                            .border(
-                                BorderStroke(1.dp, Color.White),
-                                CircleShape
-                            )
+                            .padding(start = 16.dp)
+                            .align(Alignment.CenterVertically)
                     )
                 }
-                Spacer(Modifier.size(12.dp))
-                Text(text = bot.name)
             }
             Divider()
         }
