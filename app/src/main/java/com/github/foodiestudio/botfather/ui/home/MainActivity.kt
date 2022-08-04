@@ -5,9 +5,14 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
@@ -18,12 +23,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -43,6 +51,8 @@ import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.github.foodiestudio.application.theme.ApplicationTheme
 import com.github.foodiestudio.botfather.R
+import com.github.foodiestudio.botfather.T
+import com.github.foodiestudio.botfather.data.Bot
 import com.github.foodiestudio.botfather.sdk.BotBean
 import com.github.foodiestudio.botfather.sdk.Platform
 import com.github.foodiestudio.botfather.ui.NavGraphs
@@ -50,6 +60,7 @@ import com.github.foodiestudio.botfather.ui.chat.ChatActivity
 import com.github.foodiestudio.botfather.ui.destinations.SettingScreenDestination
 import com.github.foodiestudio.botfather.ui.theme.DefaultTransition
 import com.github.kkoshin.ctc.compose.山茶红
+import com.github.kkoshin.ctc.compose.月白
 import com.github.kkoshin.ctc.compose.蓝绿
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -106,7 +117,7 @@ fun MainScreen(
     }
 
     Scaffold(
-        backgroundColor = MaterialTheme.colors.background,
+        backgroundColor = 月白,
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.app_name)) },
@@ -119,9 +130,14 @@ fun MainScreen(
                 })
         },
         content = {
-            Chats(bots) { bot ->
-                ChatActivity.start(context, bot.id, bot.platform)
-            }
+            Chats(bots,
+                modifier = Modifier
+                    .wrapContentHeight(),
+                onClick = { bot ->
+                    ChatActivity.start(context, bot.id, bot.platform)
+                }, onDelete = { id ->
+                    viewModel.removeItem(id)
+                })
         },
         floatingActionButton = {
             FloatingActionButton(onClick = {
@@ -136,81 +152,118 @@ fun MainScreen(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun Chats(bots: List<BotBean>, modifier: Modifier = Modifier, onClick: (BotBean) -> Unit) {
-    val widthPx = with(LocalDensity.current) { 360.dp.toPx() }
-    val swipeThreshold = with(LocalDensity.current) { 1.dp.toPx() }
-
-    LazyColumn(modifier = modifier) {
+fun Chats(
+    bots: List<BotBean>,
+    modifier: Modifier = Modifier,
+    onClick: (BotBean) -> Unit,
+    onDelete: (String) -> Unit
+) {
+    LazyColumn(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(1.dp)
+    ) {
         items(bots, key = { bot -> bot.id }) { bot ->
-            val swipeableState = rememberSwipeableState(0)
-            val offset by remember {
-                derivedStateOf { swipeableState.offset.value }
-            }
-            Row(
-                modifier = Modifier
-                    .fillParentMaxWidth()
-                    .background(if (offset > 0) 蓝绿 else 山茶红)
-                    .swipeable(
-                        state = swipeableState,
-                        anchors = mapOf(0f to 0, widthPx to 1),
-                        thresholds = { _, _ -> FractionalThreshold(0.5f) },
-                        orientation = Orientation.Horizontal
+            val dismissState = rememberDismissState(confirmStateChange = {
+                if (it == DismissValue.DismissedToStart) {
+                    onDelete(bot.id)
+                }
+                true
+            })
+            SwipeToDismiss(
+                state = dismissState,
+                dismissThresholds = { FractionalThreshold(0.33f) },
+                background = {
+                    val direction = dismissState.dismissDirection ?: return@SwipeToDismiss
+
+                    val color by animateColorAsState(
+                        targetValue = when (dismissState.targetValue) {
+                            DismissValue.Default -> Color.Transparent
+                            DismissValue.DismissedToEnd -> 蓝绿
+                            DismissValue.DismissedToStart -> 山茶红
+                        }
                     )
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .offset { IntOffset(offset.roundToInt(), 0) }
-                        .background(
-                            Color.White,
-                            shape = when {
-                                offset > 0 && offset > swipeThreshold -> RoundedCornerShape(
-                                    topStart = 8.dp,
-                                    bottomStart = 8.dp
-                                )
-                                offset < 0 && -offset > swipeThreshold -> RoundedCornerShape(
-                                    topEnd = 8.dp,
-                                    bottomEnd = 8.dp
-                                )
-                                else -> RoundedCornerShape(0f)
-                            }
-                        )
-                        .clickable(onClick = { onClick(bot) })
-                        .padding(16.dp)
-                ) {
-                    Box {
-                        Image(
-                            painter = rememberImagePainter(
-                                data = bot.avatar,
-                                builder = {
-                                    crossfade(true)
-                                    placeholder(R.mipmap.ic_launcher)
-                                    transformations(CircleCropTransformation())
-                                }
-                            ),
+                    val icon = when (direction) {
+                        DismissDirection.StartToEnd -> Icons.Default.Done
+                        DismissDirection.EndToStart -> Icons.Default.Delete
+                    }
+
+                    val scale by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0.8f else 1.2f)
+
+                    val alignment = when (direction) {
+                        DismissDirection.EndToStart -> Alignment.CenterEnd
+                        DismissDirection.StartToEnd -> Alignment.CenterStart
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(color)
+                            .padding(horizontal = 12.dp),
+                    ) {
+                        Icon(
+                            icon,
                             contentDescription = null,
                             modifier = Modifier
-                                .size(52.dp)
-                                .padding(2.dp)
-                                .clip(CircleShape)
-                        )
-                        ChatLabel(
-                            bot = bot,
-                            modifier = Modifier
-                                .size(18.dp)
-                                .align(Alignment.BottomEnd)
-                                .border(
-                                    BorderStroke(1.dp, Color.White),
-                                    CircleShape
-                                )
+                                .scale(scale)
+                                .align(alignment)
                         )
                     }
-                    Spacer(Modifier.size(12.dp))
-                    Text(text = bot.name)
+                },
+                dismissContent = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(
+                                shape = when (dismissState.targetValue) {
+                                    DismissValue.DismissedToEnd -> RoundedCornerShape(
+                                        topStart = 8.dp,
+                                        bottomStart = 8.dp
+                                    )
+                                    DismissValue.DismissedToStart -> RoundedCornerShape(
+                                        topEnd = 8.dp,
+                                        bottomEnd = 8.dp
+                                    )
+                                    DismissValue.Default -> RoundedCornerShape(0f)
+                                }
+                            )
+                            .background(MaterialTheme.colors.surface)
+                            .clickable(onClick = { onClick(bot) })
+                            .padding(16.dp)
+                    ) {
+                        Box {
+                            Image(
+                                painter = rememberImagePainter(
+                                    data = bot.avatar,
+                                    builder = {
+                                        crossfade(true)
+                                        placeholder(R.mipmap.ic_launcher)
+                                        transformations(CircleCropTransformation())
+                                    }
+                                ),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(52.dp)
+                                    .padding(2.dp)
+                                    .clip(CircleShape)
+                            )
+                            ChatLabel(
+                                bot = bot,
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .align(Alignment.BottomEnd)
+                                    .border(
+                                        BorderStroke(1.dp, Color.White),
+                                        CircleShape
+                                    )
+                            )
+                        }
+                        Spacer(Modifier.size(12.dp))
+                        Text(text = bot.name)
+                    }
                 }
-            }
-            Divider()
+            )
+//            Divider()
         }
     }
 }
@@ -253,8 +306,8 @@ fun DefaultPreview() {
         Chats(
             listOf(
                 BotBean("111", Platform.WeCom)
-            )
-        ) {
-        }
+            ), onClick = {},
+            onDelete = {
+            })
     }
 }
