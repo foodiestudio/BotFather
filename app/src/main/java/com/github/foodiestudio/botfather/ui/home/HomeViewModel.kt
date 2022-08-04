@@ -19,6 +19,12 @@ class HomeViewModel : ViewModel() {
     val bots: LiveData<List<BotBean>>
         get() = _bots
 
+    fun removeItem(id: String) {
+        _bots.value = _bots.value?.toMutableList()?.apply {
+            removeIf { it.id == id }
+        }
+    }
+
     fun fetchData() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
