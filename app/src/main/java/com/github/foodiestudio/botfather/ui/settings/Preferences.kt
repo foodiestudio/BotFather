@@ -64,7 +64,6 @@ fun SwitchPreferencePreview() {
         checked = true,
         onCheckedChange = {},
         modifier = Modifier.clickable {
-
         }
     )
 }

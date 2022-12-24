@@ -17,7 +17,7 @@ class MockService : WeComService, DingTalkService, LarkService {
             ----------------------------
             ${msg.markdown?.content ?: msg.text?.content}
             ============================
-        """.trimIndent()
+            """.trimIndent()
         )
         return failResp(123, "???")
     }
@@ -36,7 +36,7 @@ class MockService : WeComService, DingTalkService, LarkService {
             ----------------------------
             ${msg.markdown?.text ?: msg.text?.content}
             ============================
-        """.trimIndent()
+            """.trimIndent()
         )
         return failResp(123, "???")
     }
@@ -50,7 +50,7 @@ class MockService : WeComService, DingTalkService, LarkService {
             ----------------------------
             ${msg.markdown?.text ?: msg.text?.content}
             ============================
-        """.trimIndent()
+            """.trimIndent()
         )
         return failResp(123, "???")
     }
@@ -64,7 +64,7 @@ class MockService : WeComService, DingTalkService, LarkService {
             ----------------------------
             ${msg.content.text}
             ============================
-        """.trimIndent()
+            """.trimIndent()
         )
         return failResp(123, "???")
     }

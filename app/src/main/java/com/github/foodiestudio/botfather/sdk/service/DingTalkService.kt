@@ -11,8 +11,10 @@ interface DingTalkService {
     @Headers("Content-Type: application/json")
     @POST("robot/send")
     suspend fun sendMsgWithSign(
-        @Query("access_token") token: String, @Query("timestamp") current: Long,
-        @Query("sign") sign: String, @Body msg: DingTalkMsg
+        @Query("access_token") token: String,
+        @Query("timestamp") current: Long,
+        @Query("sign") sign: String,
+        @Body msg: DingTalkMsg
     ): Response
 
     @Headers("Content-Type: application/json")

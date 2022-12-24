@@ -19,7 +19,6 @@ class WeComBotHelper(botQueries: BotQueries) : BotHelper(botQueries) {
      * 发送给所有
      */
     override suspend fun sendMsgToAll(msg: TextMessage) {
-
     }
 
     /**

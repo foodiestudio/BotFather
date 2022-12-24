@@ -3,6 +3,7 @@ plugins {
     alias libs.plugins.kotlin.android
     alias libs.plugins.sqldelight
     alias libs.plugins.ksp
+    alias libs.plugins.ktlint
 }
 
 android {
@@ -71,4 +72,8 @@ dependencies {
     implementation libs.theme
     implementation libs.compose.destinations.core
     ksp libs.compose.destinations.ksp
+}
+
+ktlint {
+    disabledRules = ["no-wildcard-imports"]
 }

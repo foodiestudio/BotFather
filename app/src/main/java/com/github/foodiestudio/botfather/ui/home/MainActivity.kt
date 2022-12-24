@@ -5,16 +5,10 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.ScrollableDefaults
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -34,25 +28,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewmodel.ViewModelInitializer
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.github.foodiestudio.application.theme.ApplicationTheme
 import com.github.foodiestudio.botfather.R
-import com.github.foodiestudio.botfather.T
-import com.github.foodiestudio.botfather.data.Bot
 import com.github.foodiestudio.botfather.sdk.BotBean
 import com.github.foodiestudio.botfather.sdk.Platform
 import com.github.foodiestudio.botfather.ui.NavGraphs
@@ -69,9 +56,6 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
-import kotlin.math.abs
-import kotlin.math.absoluteValue
-import kotlin.math.roundToInt
 
 /**
  * 类似与IM那样，首页展示 Bot 列表，底部有个 FAB(添加)
@@ -127,17 +111,20 @@ fun MainScreen(
                     }) {
                         Icon(Icons.Default.Settings, "settings")
                     }
-                })
+                }
+            )
         },
         content = {
-            Chats(bots,
+            Chats(
+                bots,
                 modifier = Modifier
                     .wrapContentHeight(),
                 onClick = { bot ->
                     ChatActivity.start(context, bot.id, bot.platform)
                 }, onDelete = { id ->
-                    viewModel.removeItem(id)
-                })
+                viewModel.removeItem(id)
+            }
+            )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = {
@@ -148,7 +135,6 @@ fun MainScreen(
         }
     )
 }
-
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -296,7 +282,6 @@ fun ChatLabel(bot: BotBean, modifier: Modifier = Modifier) {
             )
         }
     }
-
 }
 
 @Preview(showBackground = true)
@@ -306,8 +291,10 @@ fun DefaultPreview() {
         Chats(
             listOf(
                 BotBean("111", Platform.WeCom)
-            ), onClick = {},
+            ),
+            onClick = {},
             onDelete = {
-            })
+            }
+        )
     }
 }

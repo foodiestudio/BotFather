@@ -8,7 +8,6 @@ import com.github.foodiestudio.botfather.sdk.service.DingTalkService
 import com.github.foodiestudio.botfather.sdk.service.LarkService
 import com.github.foodiestudio.botfather.sdk.service.WeComService
 import com.github.foodiestudio.botfather.ui.chat.ChatViewModel
-import com.github.foodiestudio.botfather.ui.home.HomeViewModel
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
 import okhttp3.OkHttpClient
@@ -18,7 +17,6 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
 
 val uiModules = module {
     viewModel { params -> ChatViewModel(params.get()) }
@@ -83,4 +81,3 @@ val serviceModule = module {
 }
 
 val appModule = uiModules + sdkModules + serviceModule
-

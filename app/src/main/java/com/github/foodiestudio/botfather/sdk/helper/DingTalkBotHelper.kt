@@ -88,7 +88,7 @@ class DingTalkBotHelper(botQueries: BotQueries) : BotHelper(botQueries) {
         val stringToSign = """
             $timestamp
             $secret
-            """.trimIndent()
+        """.trimIndent()
         val mac: Mac = Mac.getInstance("HmacSHA256")
         mac.init(SecretKeySpec(secret.toByteArray(charset("UTF-8")), "HmacSHA256"))
         val signData: ByteArray = mac.doFinal(stringToSign.toByteArray(charset("UTF-8")))

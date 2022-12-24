@@ -28,7 +28,6 @@ import com.github.foodiestudio.botfather.R
 import com.github.foodiestudio.botfather.sdk.BotBean
 import com.github.foodiestudio.botfather.sdk.Platform
 import com.github.foodiestudio.botfather.sdk.TextMessage
-import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
@@ -91,11 +90,11 @@ class ChatActivity : ComponentActivity() {
  */
 private val WeComTEMPLATE = """
         <font color="comment">新年快乐</font>
-    """.trimIndent()
+""".trimIndent()
 
 private val TEMPLATE = """
         新年快乐
-    """.trimIndent()
+""".trimIndent()
 
 @Composable
 fun ChatScreen(bot: BotBean, viewModel: ChatViewModel) {
@@ -144,7 +143,8 @@ fun ChatScreen(bot: BotBean, viewModel: ChatViewModel) {
                     }) {
                         Icon(Icons.Default.Send, "send")
                     }
-                })
+                }
+            )
         },
         content = {
             Column(
@@ -152,7 +152,6 @@ fun ChatScreen(bot: BotBean, viewModel: ChatViewModel) {
                     .padding(it.calculateTopPadding())
                     .fillMaxWidth()
             ) {
-
             }
             OutlinedTextField(
                 placeholder = {
@@ -167,8 +166,6 @@ fun ChatScreen(bot: BotBean, viewModel: ChatViewModel) {
                     .padding(16.dp)
                     .fillMaxSize()
             )
-
         }
     )
 }
-

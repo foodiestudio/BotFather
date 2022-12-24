@@ -59,7 +59,7 @@ class BotFatherApp : Application(), CoroutineScope by MainScope() {
          * Koin 允许加载同类的 module，覆盖之前的
          */
         fun loadServiceModule(debug: Boolean) {
-            if (debug) {
+            if (debug){
                 loadKoinModules(debugModule)
             } else {
                 unloadKoinModules(debugModule)

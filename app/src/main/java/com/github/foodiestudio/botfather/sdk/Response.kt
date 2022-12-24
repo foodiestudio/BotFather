@@ -3,9 +3,9 @@ package com.github.foodiestudio.botfather.sdk
 import com.google.gson.annotations.SerializedName
 
 data class Response(
-    @SerializedName( value = "errcode",alternate = arrayOf("code"))
+    @SerializedName(value = "errcode", alternate = arrayOf("code"))
     val errcode: Int,
-    @SerializedName( value = "errmsg",alternate = arrayOf("msg"))
+    @SerializedName(value = "errmsg", alternate = arrayOf("msg"))
     val errmsg: String
 ) {
 
