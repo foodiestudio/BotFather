@@ -36,7 +36,7 @@ compose-destinations-ksp = { module = "io.github.raamcosta.compose-destinations:
 logcat = "com.jakewharton.timber:timber:5.0.1"
 coil = "io.coil-kt:coil-compose:1.4.0"
 koin = "io.insert-koin:koin-android:3.2.0"
-sql = "com.squareup.sqldelight:android-driver:1.5.3"
+sql = "com.squareup.sqldelight:android-driver:1.5.5"
 
 ctc = "com.github.kkoshin:ctc:0.1.1"
 dev-tools = "com.github.foodiestudio:dev-tools:0.0.1"
