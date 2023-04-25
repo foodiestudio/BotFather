@@ -9,7 +9,7 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 sqldelight = { id = "com.squareup.sqldelight", version = "1.5.3" }
 ksp = { id = "com.google.devtools.ksp", version = "1.7.0-1.0.6" }
-ktlint = { id = "org.jlleitschuh.gradle.ktlint", version = "11.0.0" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version = "11.3.2" }
 
 [libraries]
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
